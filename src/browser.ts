@@ -94,8 +94,11 @@ try {
   }
 
   writeIndented(`
-    # Welcome to a shell powered by WebAssembly, WASI, Asyncify and File System Access API!
-    # Github repo with the source code and details: https://github.com/GoogleChromeLabs/wasi-fs-access
+    # Browser AI Coder
+    # An environment where AI writes Python for you, powered by WebAssembly & WebLLM.
+    #
+    # Forked from GoogleChromeLabs/wasi-fs-access
+    # Source: https://github.com/kazum/browser-ai-coder
 
   `);
   if (!hasSupport) {

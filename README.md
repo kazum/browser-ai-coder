@@ -1,27 +1,67 @@
-# wasi-fs-access
+# Browser AI Coder
 
-## What
+> An in-browser coding environment where an AI Agent writes and executes Python for you. powered by WebAssembly, WebLLM, and Pyodide.
 
-This is a demo shell powered by [WebAssembly](https://webassembly.org/), [WASI](https://wasi.dev/), [Asyncify](https://emscripten.org/docs/porting/asyncify.html) and [File System Access API](https://wicg.github.io/file-system-access/).
+[Demo](https://kazum.github.io/browser-ai-coder/) | [Source](https://github.com/kazum/browser-ai-coder)
 
-You can access the live version here: https://wasi.rreverser.com/
+This project is a fork of [wasi-fs-access](https://github.com/GoogleChromeLabs/wasi-fs-access) by Google Chrome Labs. It extends the original WASI shell with an embedded Large Language Model and Python runtime, creating a fully local, privacy-centric AI coding assistant.
 
-Or watch a video showing some of the features: [![Youtube recording](https://user-images.githubusercontent.com/557590/95856904-b16b2300-0d52-11eb-9726-5ce4f2df7915.png)](https://youtu.be/qRmO-8b4WmE)
+## Features
 
-## How
+-   **AI Agent (`coder`)**: Integrated Qwen2.5-Coder model (via WebLLM) running entirely in your browser (WebGPU required).
+-   **Python Runtime**: Execute Python 3.11 scripts directly in the shell (via Pyodide) with full access to mounted files.
+-   **Local Filesystem Access**: Mount your local directories to the browser environment safely using the [File System Access API](https://wicg.github.io/file-system-access/).
+-   **Zero Server Dependency**: No data is sent to the cloud. Your code and prompts stay on your device.
 
-It provides [WASI bindings implementation](https://github.com/GoogleChromeLabs/wasi-fs-access/blob/main/src/bindings.ts#LC511:~:text=getWasiImports()%20%7B) that proxies any filesystem requests to a real, host filesystem. This allows apps built in languages like C, C++, Rust and others to be compiled to WebAssembly and work as usual within a browser sandbox, accessing and manipulating files in a "real world".
+## Usage
 
-Since WASI APIs are synchronous by nature, but Web APIs are traditionally asynchronous to avoid blocking the main thread, Asyncify is used to bridge the two types of APIs together. Asyncify is a feature created as part of [Emscripten](https://emscripten.org/) and later extended to work with arbitrary WebAssembly files with the help of a [custom JavaScript wrapper](https://github.com/GoogleChromeLabs/asyncify).
+1.  Open the [Demo](https://kazum.github.io/browser-ai-coder/).
+2.  Mount a local directory:
+    ```bash
+    $ mount /work
+    ```
+    (Select a folder on your computer when prompted)
+3.  Start the AI coder:
+    ```bash
+    $ coder
+    ```
+4.  Ask the AI to write code:
+    ```
+    (coder) > Create a python script to calculate Fibonacci numbers and save it to /work/fib.py
+    ```
+5.  Run the code:
+    ```bash
+    $ python /work/fib.py
+    ```
 
-A [Rust port of coreutils with some patches](https://github.com/RReverser/coreutils) was chosen for the demo purposes, but it should be possible to extract and reuse same bindings for any applications compiled for the WebAssembly + WASI target.
+## Browser Support
 
-Note that some commands in the demo might not work due to either limitations of the WASI itself, limitations of the File System Access API (such as an [absent support for symlinks](https://github.com/WICG/file-system-access/issues/113)), or simply due to hardcoded assumptions about the target system in the used coreutils codebase itself. Most of those limitations can be easily worked around or will be naturally fixed as both APIs develop over time.
+Requires a modern browser with support for:
+-   WebAssembly (WASI)
+-   File System Access API (Chrome, Edge, Opera)
+-   WebGPU (for AI features)
+-   SharedArrayBuffer (for Python/AI performance)
 
-### Want to learn more?
+## Development
 
-Read up a blog post about Asyncify: https://web.dev/asyncify/
+```bash
+# Install dependencies
+npm install
 
-Or check out my presentation from the [WebAssembly Live!](https://webassembly.live/) here: https://www.slideshare.net/RReverser/asyncifying-webassembly-for-the-modern-web
+# Build the project
+npm run build
 
-And / or the talk: https://youtu.be/pzIJYAbcbf8?t=82
+# Run a local server (SharedArrayBuffer headers required)
+# Recommended to use a server that supports COOP/COEP, or use the included coi-serviceworker hack.
+npx serve .
+```
+
+## Credits & License
+
+Forked from [GoogleChromeLabs/wasi-fs-access](https://github.com/GoogleChromeLabs/wasi-fs-access).
+Original code is Apache-2.0 Licensed.
+Modifications for AI/Python integration are also under Apache-2.0.
+
+-   **Shell & WASI integration**: [GoogleChromeLabs/wasi-fs-access](https://github.com/GoogleChromeLabs/wasi-fs-access)
+-   **LLM Runtime**: [WebLLM](https://github.com/mlc-ai/web-llm) by MLC AI
+-   **Python Runtime**: [Pyodide](https://github.com/pyodide/pyodide)
